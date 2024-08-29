@@ -9,7 +9,7 @@ import PrivateRoute from './Components/PrivateRoute';
 
 function App() {
   return (
-    < Router>
+    <Router>
       <Routes>
         <Route path="/" element={<PrivateRoute><Home /></PrivateRoute>} />
         <Route path="/albums/:albumId" element={<Album />} />

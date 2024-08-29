@@ -46,8 +46,8 @@ const AllAlbums = () => {
   };
 
 
-  const handleAlbumClick = (albumId) => {
-    navigate(`/albums/${albumId}`);
+  const handleAlbumClick = (albumId,album_name) => {
+    navigate(`/albums/${albumId}`, { state: { album_name } });
   };
 
   const handleCreateAlbum = async (e) => {
@@ -116,7 +116,7 @@ const AllAlbums = () => {
             <div
               key={album.ids}
               style={styles.albumCard}
-              onClick={() => handleAlbumClick(album.ids)}
+              onClick={() => handleAlbumClick(album.ids,album.name)}
             >
               <p>{album.name}</p>
             </div>

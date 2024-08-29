@@ -1,13 +1,19 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 import Navbar from '../Components/Navbar';
 import './Album.css';
 
 const Album = () => {
+  const location = useLocation();
+  const { album_name } = location.state || {};
   const [images, setImages] = useState([]);
   const [cloudinaryImages, setCloudinaryImages] = useState([]);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [cameraEnabled, setCameraEnabled] = useState(false);
+  const [cameraStream, setCameraStream] = useState(null);
+  const videoRef = useRef(null);
+  const canvasRef = useRef(null);
 
   const { albumId } = useParams();
   const authToken = localStorage.getItem('token');
@@ -89,6 +95,55 @@ const Album = () => {
     }
   };
 
+  const startCamera = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      setCameraStream(stream);
+      videoRef.current.srcObject = stream;
+      setCameraEnabled(true);
+    } catch (error) {
+      console.error('Error accessing the camera:', error);
+    }
+  };
+
+  const captureImage = () => {
+    const context = canvasRef.current.getContext('2d');
+    context.drawImage(videoRef.current, 0, 0, canvasRef.current.width, canvasRef.current.height);
+    const dataUrl = canvasRef.current.toDataURL('image/png');
+    return dataUrl;
+  };
+
+  const handleViewMine = async () => {
+    if (!cameraEnabled) {
+      startCamera();
+    } else {
+      const capturedImage = captureImage();
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_BASE_URL}/albums/${albumId}/find-my-images`,
+          {
+            params: {
+              album_id: albumId,
+              captured_image: capturedImage,
+            },
+            headers: {
+              'Authorization': `Bearer ${authToken}`,
+            },
+          }
+        );
+
+        const myImages = response.data; // Assuming it returns a list of image URLs
+        setCloudinaryImages(myImages);
+        if (cameraStream) {
+          cameraStream.getTracks().forEach(track => track.stop());
+        }
+        setCameraEnabled(false);
+      } catch (error) {
+        console.error('Error fetching my images:', error);
+      }
+    }
+  };
+
   const handleScrollToGallery = () => {
     document.getElementById('gallery-section').scrollIntoView({ behavior: 'smooth' });
   };
@@ -98,10 +153,10 @@ const Album = () => {
       <Navbar />
       <div className="cover-image-container">
         <div className="cover-content">
-          <div className="album-name">Memories of IIT Guwahati</div>
+          <div className="album-name">Memories of {album_name || 'Album'}</div>
           <div className="button-group">
             <div className="view-buttons">
-              <button className="action-button">View Mine</button>
+              <button className="action-button" onClick={handleViewMine}>View Mine</button>
               <button className="action-button" onClick={handleScrollToGallery}>View All</button>
             </div>
             <div className="seperation">|</div>
@@ -112,6 +167,13 @@ const Album = () => {
           </div>
         </div>
       </div>
+
+      {cameraEnabled && (
+        <div className="camera-section">
+          <video ref={videoRef} autoPlay className="camera-view"></video>
+          <canvas ref={canvasRef} style={{ display: 'none' }} width="640" height="480"></canvas>
+        </div>
+      )}
 
       <div id="gallery-section" className="gallery-section">
 
