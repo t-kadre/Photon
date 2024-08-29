@@ -1,12 +1,17 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
+import Navbar from '../Components/Navbar';
+import './Album.css';
 
 const Album = () => {
   const [images, setImages] = useState([]);
   const [cloudinaryImages, setCloudinaryImages] = useState([]);
+  const [selectedImage, setSelectedImage] = useState(null);
+
   const { albumId } = useParams();
-  
+  const authToken = localStorage.getItem('token');
+
   const cloudName = process.env.REACT_APP_CLOUD_NAME;
   const apiKey = process.env.REACT_APP_CLOUDINARY_API_KEY;
   const apiSecret = process.env.REACT_APP_CLOUDINARY_API_SECRET;
@@ -19,10 +24,18 @@ const Album = () => {
     setImages(e.target.files);
   };
 
+  const handleImageClick = (url) => {
+    setSelectedImage(url);
+  };
+
+  const closeModal = () => {
+    setSelectedImage(null);
+  };
+
   const handleUpload = async () => {
     const urls = [];
     const formData = new FormData();
-    
+
     for (let i = 0; i < images.length; i++) {
       formData.append('file', images[i]);
       formData.append('upload_preset', 'ai-image-sorter');
@@ -39,17 +52,15 @@ const Album = () => {
     }
 
     try {
-      const backendResponse = await axios.post(`https://album-sorter-backend.vercel.app/albums/1/upload`, 
-        {
-        imageUrls: urls,
-        },
+      const backendResponse = await axios.post(`${process.env.REACT_APP_BASE_URL}/albums/${albumId}/upload`,urls,
         {
           headers: {
-            Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyMUBleGFtcGxlLmNvbSIsImV4cCI6MTcyNDg0NDI4Mn0.DWNR2Q2KsSCwYk4zUDmdstgncim-Qk1K1Cx63dP69Rw`,
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`,
           },
         }
       );
-  
+
       console.log('Images and Album details uploaded to backend:', backendResponse.data);
     } catch (backendError) {
       console.error('Error sending data to backend:', backendError);
@@ -60,41 +71,91 @@ const Album = () => {
 
   const fetchAllCloudinaryImages = async () => {
     try {
-      const response = await axios.get(`https://album-sorter-backend.vercel.app/albums/1`, {
+      const response = await axios.get(`${process.env.REACT_APP_BASE_URL}/albums/${albumId}`, {
         params: {
-          album_id: '1',
-          password: 'string',
+          album_id: albumId,
+        },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`, // Ensure authToken is available in your component
         },
       });
-  
-      const existingImageURLs = response.data.imageUrls;
+
+      const existingImageURLs = response.data;
+      console.log('Existing images:', existingImageURLs);
       setCloudinaryImages(existingImageURLs);
     } catch (error) {
       console.error('Error fetching images from backend:', error);
     }
   };
 
+  const handleScrollToGallery = () => {
+    document.getElementById('gallery-section').scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
-    <div>
-      <h2>Upload Multiple Images</h2>
-      <input type="file" multiple onChange={handleFileChange} />
-      <button onClick={handleUpload}>Upload Images</button>
-  
-      {cloudinaryImages && (
-        <>
-          <h3>Uploaded Images</h3>
-          <div>
-            {cloudinaryImages.map((url, index) => (
-              <img key={index} src={url} alt={`Uploaded ${index}`} />
-            ))}
-            {/* <img src="https://res.cloudinary.com/du1g4j6f8/image/upload/v1724794501/whynegsahth6fveeehk6.jpg" alt="Placeholder 1" />
-            <img src="https://res.cloudinary.com/du1g4j6f8/image/upload/v1724794501/whynegsahth6fveeehk6.jpg" alt="Placeholder 2" />
-            <img src="https://res.cloudinary.com/du1g4j6f8/image/upload/v1724794501/whynegsahth6fveeehk6.jpg" alt="Placeholder 3" /> */}
+    <div className="photo-view-page">
+      <Navbar />
+      <div className="cover-image-container">
+        <div className="cover-content">
+          <div className="album-name">Memories of IIT Guwahati</div>
+          <div className="button-group">
+            <div className="view-buttons">
+              <button className="action-button">View Mine</button>
+              <button className="action-button" onClick={handleScrollToGallery}>View All</button>
+            </div>
+            <div className="seperation">|</div>
+            <div className="upload">
+              <input type="file" multiple onChange={handleFileChange} />
+              <button className="action-button" onClick={handleUpload}>Upload</button>
+            </div>
           </div>
-        </>
+        </div>
+      </div>
+
+      <div id="gallery-section" className="gallery-section">
+
+        {/* {cloudinaryImages.length > 0 && (
+          <>
+            <div className="image-gallery">
+              {cloudinaryImages.map((url, index) => (
+                <img key={index} src={url} alt={`Uploaded ${index}`} className="gallery-image" />
+              ))}
+            </div>
+          </>
+        )} */}
+        <div className="image-gallery">
+          {cloudinaryImages && (
+            <>
+              {cloudinaryImages.map((url, index) => (
+            <div className="image-container" key={index}>
+              <img
+                src={url}
+                alt={`Uploaded ${index}`}
+                className="gallery-image"
+                onClick={() => handleImageClick(url)}
+              />
+              <div className="overlay">
+                <button onClick={() => window.open(url, '_blank')}>Download</button>
+              </div>
+            </div>
+          ))}
+            </>
+          )}
+        </div>
+        {selectedImage && (
+        <div className="modal" onClick={closeModal}>
+          <span className="close">&times;</span>
+          <img className="modal-content" src={selectedImage} alt="Enlarged view" />
+        </div>
       )}
+      </div>
+
+      <footer className="footer">
+        Powered by Photon
+      </footer>
     </div>
-  );  
+  );
 };
 
 export default Album;

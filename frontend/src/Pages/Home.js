@@ -4,7 +4,7 @@ import cloudinary from 'cloudinary-core';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Navbar from '../Components/Navbar';
-import AllAlbums from '../Components/AllAlbums';
+import AllAlbums from './AllAlbums';
 
 const Home = () => {
 

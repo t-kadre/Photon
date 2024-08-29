@@ -1,35 +1,23 @@
 import React from 'react';
+import "./Navbar.css";
+import logout from "../Assets/logout.png";
+import logo from "../Assets/logo.png";
+import { Link } from 'react-router-dom';
 
 const Navbar = () => {
   return (
-    <nav style={styles.navbar}>
-      <h1 style={styles.title}>AI Album Sorter</h1>
-      <ul style={styles.navLinks}>
-        <li><a href="/">All Albums</a></li>
-        <li><a href="#addAlbum">Add Album</a></li>
-        <li><a href="#login">LOGIN</a></li>
-      </ul>
+    <nav className="navbar">
+      <div className="logo-name">
+        <div className="logo"><Link to = "/Home"><img src={logo}></img></Link></div>
+      </div>
+      <div className="log-out">
+        <img src={logout} alt="logout" onClick={() => {
+          localStorage.removeItem('token');
+          window.location.href = '/';
+        }}/>
+      </div>
     </nav>
   );
-};
-
-const styles = {
-  navbar: {
-    backgroundColor: '#333',
-    padding: '10px',
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  title: {
-    color: '#fff',
-    margin: '0',
-  },
-  navLinks: {
-    listStyleType: 'none',
-    display: 'flex',
-    gap: '10px',
-  },
 };
 
 export default Navbar;

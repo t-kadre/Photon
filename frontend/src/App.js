@@ -12,8 +12,9 @@ function App() {
     < Router>
       <Routes>
         <Route path="/" element={<PrivateRoute><Home /></PrivateRoute>} />
-        <Route path="/album/:albumId" element={<Album />} />
+        <Route path="/albums/:albumId" element={<Album />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/home" element={<Home />} />
         <Route path="/signup" element={<SignUp />} />
       </Routes>
     </Router>

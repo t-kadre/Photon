@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import './SignUp.css';
+import logo from '../Assets/logo.png';
 
 const SignUp = () => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -12,18 +14,13 @@ const SignUp = () => {
     event.preventDefault();
     setError('');
 
-    const formData = new URLSearchParams();
-    formData.append('grant_type', 'password');
-    formData.append('username', username);
-    formData.append('password', password);
-    formData.append('scope', '');
-    formData.append('client_id', '');
-    formData.append('client_secret', '');
-
     try {
-      const response = await axios.post('https://album-sorter-backend.vercel.app/signup', formData, {
+      const response = await axios.post(`${process.env.REACT_APP_BASE_URL}/signup`,  {
+        email,
+        password,
+      }, {
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
+          'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
       });
@@ -43,31 +40,49 @@ const SignUp = () => {
   };
 
   return (
-    <div className="signup-container">
-      <h2>Sign Up</h2>
-      <form onSubmit={handleSignup}>
-        <div>
-          <label>Email:</label>
-          <input 
-            type="email" 
-            value={username} 
-            onChange={(e) => setUsername(e.target.value)} 
-            required 
-          />
+    <div className = "signup-page">
+      <div className="signup-page-container">
+      <div className="left-half">
+        <div className="brand-logo">
+          {/* Replace with your brand logo */}
+          <img src={logo} alt="Brand Logo" />
         </div>
-        <div>
-          <label>Password:</label>
-          <input 
-            type="password" 
-            value={password} 
-            onChange={(e) => setPassword(e.target.value)} 
-            required 
-          />
+        <div className="website-details">
+          <h1>Join Our Community</h1>
+          <p>
+            Create an account to start experiencing our services. It's quick and easy!
+          </p>
         </div>
-        {error && <p style={{ color: 'red' }}>{error}</p>}
-        <button type="submit">Sign Up</button>
-      </form>
-      <p>Already have an account? <a href="/login">Log In</a></p>
+      </div>
+      <div className="right-half">
+        <h2>Sign Up</h2>
+        <form onSubmit={handleSignup}>
+          <div className="input-group">
+            <input
+              type="email"
+              placeholder="E-mail"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+          <div className="input-group">
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
+          {error && <p style={{ color: 'red' }}>{error}</p>}
+          <div className = "signup-btn"><button type="submit" className="sign-up-button">Sign Up</button></div>
+        </form>
+        <p className="login-text">
+          Already have an account? <a href="/login">Log In</a>
+        </p>
+      </div>
+    </div>
     </div>
   );
 };

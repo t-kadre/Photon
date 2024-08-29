@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import './Login.css';
+import logo from '../Assets/logo.png';
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -21,7 +23,7 @@ const Login = () => {
     formData.append('client_secret', '');
 
     try {
-      const response = await axios.post('https://album-sorter-backend.vercel.app/token', formData, {
+      const response = await axios.post(`${process.env.REACT_APP_BASE_URL}/token`, formData, {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
           'Accept': 'application/json',
@@ -43,31 +45,49 @@ const Login = () => {
   };
 
   return (
-    <div className="signup-container">
-      <h2>Login</h2>
-      <form onSubmit={handleLogin}>
-        <div>
-          <label>Username:</label>
-          <input 
-            type="email" 
-            value={username} 
-            onChange={(e) => setUsername(e.target.value)} 
-            required 
-          />
+    <div className="login-page">
+    <div className="login-page-container">
+      <div className="left-half">
+        <div className="brand-logo">
+          {/* Replace with your brand logo */}
+          <img src={logo} alt="Brand Logo" />
         </div>
-        <div>
-          <label>Password:</label>
-          <input 
-            type="password" 
-            value={password} 
-            onChange={(e) => setPassword(e.target.value)} 
-            required 
-          />
+        <div className="website-details">
+          <h1>Welcome to Photon</h1>
+          <p>
+            Discover the best solutions for your needs. Join us today and experience the future.
+          </p>
         </div>
-        {error && <p style={{ color: 'red' }}>{error}</p>}
-        <button type="submit">Login</button>
-      </form>
-      <p>Don't have an account? <a href="/signup">Sign Up</a></p>
+      </div>
+      <div className="right-half">
+        <h2>Sign In</h2>
+        <form onSubmit={handleLogin}>
+          <div className="input-group">
+            <input
+              type="email"
+              placeholder="E-mail"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+            />
+          </div>
+          <div className="input-group">
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
+          {error && <p style={{ color: 'red' }}>{error}</p>}
+          <div className = "login-button"><button type="submit" className="sign-in-button">Sign In</button></div>
+        </form>
+        <p className="signup-text">
+          Don't have an account? <a href="/signup">Create an account</a>
+        </p>
+      </div>
+    </div>
     </div>
   );
 };

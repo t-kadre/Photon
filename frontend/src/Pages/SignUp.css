@@ -1,0 +1,135 @@
+.signup-page {
+    margin: 0;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #181A1B;
+    position: relative;
+  }
+  
+  .signup-page-container {
+    width: 80%;
+    height: 80%;
+    display: flex;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  }
+  
+  .left-half {
+    background: #2C2F33;
+    flex: 1;
+    padding: 10px;
+    color: #FFFFFF;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 5% 0 0 5%;
+  }
+
+  .website-details {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+  
+  .left-half .brand-logo img {
+    max-width: 150px;
+    margin-bottom: 15px;
+  }
+  
+  .left-half .website-details h1 {
+    font-size: 36px;
+    margin-bottom: 20px;
+  }
+  
+  .left-half .website-details p {
+    font-size: 16px;
+    line-height: 1.5;
+    text-align: center;
+  }
+  
+  .right-half {
+    background: #232528;
+    flex: 1;
+    padding: 10px;
+    color: #FFFFFF;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 0 5% 5% 0;
+  }
+  
+  h2 {
+    margin-bottom: 20px;
+  }
+
+  form {
+    width: 50%;
+  }
+
+  .input-group {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  input[type="email"], input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    background-color: #2C2F33;
+    color: #FFFFFF;
+    font-size: 14px;
+  }
+  
+  input[type="email"]::placeholder, input[type="password"]::placeholder {
+    color: #B3B3B3;
+  }
+  
+  input:focus {
+    outline: none;
+    border: 1px solid #8A2BE2;
+  }
+
+  .signup-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .sign-up-button {
+    width: 80%;
+    padding: 10px;
+    background: linear-gradient(45deg, #8A2BE2, #9B30FF);
+    border: none;
+    border-radius: 5px;
+    color: #FFFFFF;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  .sign-up-button:hover {
+    background: linear-gradient(45deg, #9B30FF, #8A2BE2);
+  }
+  
+  .login-text {
+    color: #B3B3B3;
+    font-size: 14px;
+    margin-top: 20px;
+  }
+  
+  .login-text a {
+    color: #8A2BE2;
+    text-decoration: none;
+  }
+  
+  .login-text a:hover {
+    text-decoration: underline;
+  }
+  
