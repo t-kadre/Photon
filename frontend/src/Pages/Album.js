@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { useParams, useLocation } from 'react-router-dom';
 import Navbar from '../Components/Navbar';
+import Modal from '../Components/Modal';
+import CustomWebcam from '../Components/CustomWebcam';
 import './Album.css';
 
 const Album = () => {
@@ -10,10 +12,7 @@ const Album = () => {
   const [images, setImages] = useState([]);
   const [cloudinaryImages, setCloudinaryImages] = useState([]);
   const [selectedImage, setSelectedImage] = useState(null);
-  const [cameraEnabled, setCameraEnabled] = useState(false);
-  const [cameraStream, setCameraStream] = useState(null);
-  const videoRef = useRef(null);
-  const canvasRef = useRef(null);
+  const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal
 
   const { albumId } = useParams();
   const authToken = localStorage.getItem('token');
@@ -22,9 +21,9 @@ const Album = () => {
   const apiKey = process.env.REACT_APP_CLOUDINARY_API_KEY;
   const apiSecret = process.env.REACT_APP_CLOUDINARY_API_SECRET;
 
-  useEffect(() => {
-    fetchAllCloudinaryImages();
-  }, []);
+  // useEffect(() => {
+  //   fetchAllCloudinaryImages();
+  // }, []);
 
   const handleFileChange = (e) => {
     setImages(e.target.files);
@@ -95,57 +94,18 @@ const Album = () => {
     }
   };
 
-  const startCamera = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-      setCameraStream(stream);
-      videoRef.current.srcObject = stream;
-      setCameraEnabled(true);
-    } catch (error) {
-      console.error('Error accessing the camera:', error);
-    }
-  };
-
-  const captureImage = () => {
-    const context = canvasRef.current.getContext('2d');
-    context.drawImage(videoRef.current, 0, 0, canvasRef.current.width, canvasRef.current.height);
-    const dataUrl = canvasRef.current.toDataURL('image/png');
-    return dataUrl;
-  };
-
-  const handleViewMine = async () => {
-    if (!cameraEnabled) {
-      startCamera();
-    } else {
-      const capturedImage = captureImage();
-      try {
-        const response = await axios.get(
-          `${process.env.REACT_APP_BASE_URL}/albums/${albumId}/find-my-images`,
-          {
-            params: {
-              album_id: albumId,
-              captured_image: capturedImage,
-            },
-            headers: {
-              'Authorization': `Bearer ${authToken}`,
-            },
-          }
-        );
-
-        const myImages = response.data; // Assuming it returns a list of image URLs
-        setCloudinaryImages(myImages);
-        if (cameraStream) {
-          cameraStream.getTracks().forEach(track => track.stop());
-        }
-        setCameraEnabled(false);
-      } catch (error) {
-        console.error('Error fetching my images:', error);
-      }
-    }
-  };
-
   const handleScrollToGallery = () => {
     document.getElementById('gallery-section').scrollIntoView({ behavior: 'smooth' });
+    fetchAllCloudinaryImages();
+  };
+
+  const handleViewMine = () => {
+    setIsModalOpen(true); // Open the modal when "View Mine" is clicked
+  };
+
+  const handleImagesReceived = (cloudinaryLinks) => {
+    setCloudinaryImages(cloudinaryLinks); // Update cloudinary images with the new links
+    setIsModalOpen(false); // Close the modal after images are received
   };
 
   return (
@@ -168,12 +128,13 @@ const Album = () => {
         </div>
       </div>
 
-      {cameraEnabled && (
-        <div className="camera-section">
-          <video ref={videoRef} autoPlay className="camera-view"></video>
-          <canvas ref={canvasRef} style={{ display: 'none' }} width="640" height="480"></canvas>
-        </div>
-      )}
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+        <CustomWebcam
+          albumId={albumId}
+          authToken={authToken}
+          onImagesReceived={handleImagesReceived}
+        />
+      </Modal>
 
       <div id="gallery-section" className="gallery-section">
 
