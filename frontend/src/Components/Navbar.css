@@ -3,7 +3,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 10px 20px;
-    background-color: transparent;
+    background: transparent;
   }
   
   .logo-name {
@@ -27,6 +27,10 @@
     border-radius: 50%;
   }
   
+  .nav-btns {
+    display: flex;
+    gap: 20px;
+  }
   
   .log-out {
     display: flex;
@@ -38,6 +42,7 @@
     background: linear-gradient(45deg, #8A2BE2, #9B30FF);
     border-radius: 50%;
     transition: all 0.3s ease;
+    cursor: pointer;
   }
 
   .log-out img {

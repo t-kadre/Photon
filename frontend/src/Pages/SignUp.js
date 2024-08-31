@@ -15,7 +15,7 @@ const SignUp = () => {
     setError('');
 
     try {
-      const response = await axios.post(`${process.env.REACT_APP_BASE_URL}/signup`,  {
+      const response = await axios.post(`${process.env.REACT_APP_BASE_URL}/signup`, {
         email,
         password,
       }, {
@@ -28,6 +28,8 @@ const SignUp = () => {
       if (response.status === 200) {
         const { access_token } = response.data;
         localStorage.setItem('token', access_token);
+        setEmail('');
+        setPassword('');
         navigate('/'); // Redirect to the home page
       }
     } catch (error) {
@@ -40,49 +42,49 @@ const SignUp = () => {
   };
 
   return (
-    <div className = "signup-page">
+    <div className="signup-page">
       <div className="signup-page-container">
-      <div className="left-half">
-        <div className="brand-logo">
-          {/* Replace with your brand logo */}
-          <img src={logo} alt="Brand Logo" />
+        <div className="left-half">
+          <div className="brand-logo">
+            {/* Replace with your brand logo */}
+            <img src={logo} alt="Brand Logo" />
+          </div>
+          <div className="website-details">
+            <h1>Join Our Community</h1>
+            <p>
+              Create your Photon account and step into a world of intelligent photo organization. It's simple and fast!
+            </p>
+          </div>
         </div>
-        <div className="website-details">
-          <h1>Join Our Community</h1>
-          <p>
-            Create an account to start experiencing our services. It's quick and easy!
+        <div className="right-half">
+          <h2>Sign Up</h2>
+          <form onSubmit={handleSignup}>
+            <div className="input-group">
+              <input
+                type="email"
+                placeholder="E-mail"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+            <div className="input-group">
+              <input
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </div>
+            {error && <p style={{ color: 'red' }}>{error}</p>}
+            <div className="signup-btn"><button type="submit" className="sign-up-button">Sign Up</button></div>
+          </form>
+          <p className="login-text">
+            Already have an account? <a href="/login">Log In</a>
           </p>
         </div>
       </div>
-      <div className="right-half">
-        <h2>Sign Up</h2>
-        <form onSubmit={handleSignup}>
-          <div className="input-group">
-            <input
-              type="email"
-              placeholder="E-mail"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
-          <div className="input-group">
-            <input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
-          {error && <p style={{ color: 'red' }}>{error}</p>}
-          <div className = "signup-btn"><button type="submit" className="sign-up-button">Sign Up</button></div>
-        </form>
-        <p className="login-text">
-          Already have an account? <a href="/login">Log In</a>
-        </p>
-      </div>
-    </div>
     </div>
   );
 };

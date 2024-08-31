@@ -33,6 +33,8 @@ const Login = () => {
       if (response.status === 200) {
         const { access_token } = response.data;
         localStorage.setItem('token', access_token);
+        setUsername('');
+        setPassword('');
         navigate('/'); // Redirect to the home page
       }
     } catch (error) {
@@ -46,48 +48,48 @@ const Login = () => {
 
   return (
     <div className="login-page">
-    <div className="login-page-container">
-      <div className="left-half">
-        <div className="brand-logo">
-          {/* Replace with your brand logo */}
-          <img src={logo} alt="Brand Logo" />
+      <div className="login-page-container">
+        <div className="left-half">
+          <div className="brand-logo">
+            {/* Replace with your brand logo */}
+            <img src={logo} alt="Brand Logo" />
+          </div>
+          <div className="website-details">
+            <h1>Welcome to Photon</h1>
+            <p>
+              Find your face in a sea of memories. Embrace the smart way to organize shared photos with Photon.
+            </p>
+          </div>
         </div>
-        <div className="website-details">
-          <h1>Welcome to Photon</h1>
-          <p>
-            Discover the best solutions for your needs. Join us today and experience the future.
+        <div className="right-half">
+          <h2>Sign In</h2>
+          <form onSubmit={handleLogin}>
+            <div className="input-group">
+              <input
+                type="email"
+                placeholder="E-mail"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                required
+              />
+            </div>
+            <div className="input-group">
+              <input
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </div>
+            {error && <p style={{ color: 'red' }}>{error}</p>}
+            <div className="login-button"><button type="submit" className="sign-in-button">Sign In</button></div>
+          </form>
+          <p className="signup-text">
+            Don't have an account? <a href="/signup">Create an account</a>
           </p>
         </div>
       </div>
-      <div className="right-half">
-        <h2>Sign In</h2>
-        <form onSubmit={handleLogin}>
-          <div className="input-group">
-            <input
-              type="email"
-              placeholder="E-mail"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-            />
-          </div>
-          <div className="input-group">
-            <input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
-          {error && <p style={{ color: 'red' }}>{error}</p>}
-          <div className = "login-button"><button type="submit" className="sign-in-button">Sign In</button></div>
-        </form>
-        <p className="signup-text">
-          Don't have an account? <a href="/signup">Create an account</a>
-        </p>
-      </div>
-    </div>
     </div>
   );
 };
