@@ -1,4 +1,4 @@
-# AI-Powered Album Sorter 📸
+# Photon - AI-Powered Album Sorter 📸
 
 An intelligent photo management system that uses facial recognition to automatically organize and sort your photos in shared albums.
 
